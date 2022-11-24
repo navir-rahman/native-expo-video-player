@@ -1,49 +1,36 @@
+import React, { useEffect } from "react";
+import { ScrollView, View } from "react-native";
+import { Button, Layout, Card } from '@ui-kitten/components';
+export default function Videos({ navigation }) {
+  const secondVideo = React.useRef(null);
 
-import React from 'react'
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import Videosingle from './Videosingle';
+  const [urls, setUrls] = React.useState([]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch(
+        `https://server-for-expo-video.onrender.com/allvideofile`
+      );
+      const newData = await response.json();
+      setUrls(newData);
+    };
 
+    fetchData();
+  }, []);
 
-export default function Videos() {
-
-    const secondVideo = React.useRef(null)
- 
-    const [statusSecondVideo, setStatusVideo] = React.useState({});
-
-
-    const urls =[
-      {id:1, uri: "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4"},
-      {id:2, uri: "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4"}
-    ]
   return (
-    <View>
+    <Layout level="1">
+      <View style={{ backgroundColor: "#ffffff00" }}>
         <ScrollView>
-      <Text>Videos</Text>
-      {
-        urls.map(url=> <Videosingle
-          key={url.id}
-          url={url.uri}
-        />)
-      }
-
-      {/* <Video 
-        ref={secondVideo}
-        style={styles.video}
-        source={{uri: "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4"}}
-        useNativeControls
-        resizeMode="contain"
-        isLooping
-        onPlaybackStatusUpdate={setStatusVideo}
-      />
-      <View style={styles.buttons}>
-        <Button title='play from 5s' onPress={()=>secondVideo.current.playFromPositionAsync(50000)} />
-        <Button title={statusSecondVideo.isLooping ? "set to not loop" : "set to loop "} onPress={()=>secondVideo.current.setIsLoopingAsync(!status.isLooping)} />
-      </View> */}
-      </ScrollView>
-    </View>
-  )
+          {urls.map((url) => {
+            return (
+              <Card status='basic'  key={url._id}>
+                          <Button   onPress={()=>navigation.navigate("Videosingle", { videoId: `${url.uri}`,urlName: `${url.name}` })} > {url.name} </Button>
+              </Card>
+            );
+          })}
+        </ScrollView>
+      </View>
+    </Layout>
+  );
 }
-
-
-  

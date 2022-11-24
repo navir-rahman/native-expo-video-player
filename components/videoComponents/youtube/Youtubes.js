@@ -1,26 +1,56 @@
-import React, { useState, useCallback } from "react";
-import { Button, View, Alert } from "react-native";
+import React, { useEffect } from "react";
+import { ScrollView, StyleSheet, View } from "react-native";
+import { Button, Layout, Card } from "@ui-kitten/components";
 
-import YoutubeSingle from "./YoutubeSingle";
+export default function Youtubes({ navigation }) {
+  const [videoIDS, setvideoIDS] = React.useState([]);
 
-export default function Youtubes() {
-    const videoIDS =[
-        {id:1, uri: "iee2TATGMyI"},
-        {id:2, uri: "iee2TATGMyI"}
-      ]
-  
-    return (
-      <View>
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch(
+        `https://server-for-expo-video.onrender.com/allyoutube`
+      );
+      const newData = await response.json();
+      setvideoIDS(newData);
+    };
 
-        {
-            videoIDS.map(video=><YoutubeSingle
-                key={video.id}
-                videoId={video.uri}
-                />)
-        }
-       
+    fetchData();
+  }, []);
+
+  return (
+    <Layout level="1">
+      <View style={{ backgroundColor: "#ffffff00" }}>
+        <ScrollView>
+          {videoIDS.map((video) => {
+            return (
+              <Card status="basic" key={video._id}>
+                <Button
+                  style={styles.button}
+                  onPress={() =>
+                    navigation.navigate("youtubePlay", {
+                      videoId: `${video.youtube_id}`,
+                      videoName: `${video.name}`,
+                    })
+                  }
+                >
+                  {video.name}
+                </Button>
+              </Card>
+            );
+          })}
+        </ScrollView>
       </View>
-    );
+    </Layout>
+  );
 }
 
-
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  button: {
+    padding: 20,
+    marginTop: 10,
+  },
+});
